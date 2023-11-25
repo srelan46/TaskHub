@@ -14,7 +14,7 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
 from login import *
-from user import *
+from models import *
 from hello import *
 
 def create_app():

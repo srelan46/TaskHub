@@ -1,7 +1,7 @@
 # routes.py
 from flask import request, jsonify
 from app import app
-from user import User,db
+from models import User,db
 
 @app.route('/login', methods=['POST'])
 def login():
