@@ -5,44 +5,54 @@ from models import User, Task,db
 def tasks():
     if request.method =='POST':
         data = request.json
-        create_task(data)
-    if request.method == 'GET':
-        get_task()
+        title = data.get('title')
+        username = data.get('username')
+        description = data.get('description')
+        due_date = data.get('due_date')
+        
+        if not title or not username:
+            return jsonify({'message': 'Title, UserID and username are required'}), 400
+        
+        existing_user = User.query.filter((User.username == username)).first()
+        
+        if not existing_user:
+            return jsonify({'message':'User doesn\'t exist'}),409
+        
+        new_task = Task(
+            title=title,
+            username=username,
+            description=description,
+            due_date=due_date,
+            )
+        
+        db.session.add(new_task)
+        try:
+            db.session.commit()
+            return jsonify({'message':'Task Added Successfully'}),201
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'message':'Failed to add Task','error':str(e)}),500
+    if request.method =='GET':
+        return "<p> Tasks <p>"
 
-def create_task(data):
-    title = data.get('title')
-    user_id = data.get('user_id')
-    username = data.get('username')
-    description = data.get('description')
-    due_date = data.get('due_date')
-    
-    if not title or not user_id or not username:
-        return jsonify({'message': 'Title, UserID and username are required'}), 400
-    
-    existing_user = User.query.filter(
-        (User.username == username)|(User.id == user_id)
-    ).first()
-    
-    if not existing_user:
-        return jsonify({'message':'User doesn\'t exist'}),409
-    
-    new_task = Task(
-        title=title,
-        user_id=user_id,
-        username=username,
-        description=description,
-        due_date=due_date,
-        )
-    
-    db.session.add(new_task)
-    try:
-        db.session.commit()
-        return jsonify({'message':'Task Added Successfully'}),201
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({'message':'Failed to add Task','error':str(e)}),500
+@app.route("/alltasks",methods=['GET'])
+def get_all_tasks():
+    tasks=Task.query.all()
+    tasks_list = [{
+        'id': task.id,
+        'title': task.title,
+        'username': task.username,
+        'description': task.description,
+        'due_date': task.due_date.isoformat() if task.due_date else None,
+        'completed': task.completed,
+        'created_at': task.created_at.isoformat(),
+        'updated_at': task.updated_at.isoformat() if task.updated_at else None
+    } for task in tasks]
 
-def get_task():
-    return None
+    return jsonify(tasks_list)
+
+@app.route("/tasks/{id}",methods=['GET','Update','Delete'])
+def tasks_id():
+    return "<p> Get,Update Delete Specific task ID<\p>"
 
 

@@ -3,6 +3,7 @@ import os
 from dotenv import load_dotenv
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+
 load_dotenv()
 
 app = Flask(__name__)
@@ -16,6 +17,7 @@ bcrypt = Bcrypt(app)
 from login import *
 from models import *
 from hello import *
+from tasks import *
 
 def create_app():
     with app.app_context():
