@@ -1,10 +1,11 @@
 # routes.py
 from flask import request, jsonify
 from app import app
-from models import User,db
+from user import User,db
 
-@app.route('/login', methods=['POST'])
+@auth_blueprint.route('/login', methods=['POST'])
 def login():
+    from user import User
     data = request.json
     username = data.get('username')
     password = data.get('password')
@@ -15,12 +16,20 @@ def login():
     user = User.query.filter_by(username=username).first()
 
     if user and user.check_password(password):
+        login_user(user)
         return jsonify({'message': 'Login successful'}), 200
     else:
         return jsonify({'message': 'Invalid credentials'}), 401
-    
-@app.route('/register',methods=['POST'])
+
+@auth_blueprint.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return jsonify({'message':'you have been logged out.'}),200
+
+@auth_blueprint.route('/register',methods=['POST'])
 def register():
+    from user import User,db
     data=request.json
     username = data.get('username')
     password = data.get('password')
@@ -44,8 +53,8 @@ def register():
         last_name = last_name
     )
     new_user.set_password(password)
-    db.session.add(new_user)
     try:
+        db.session.add(new_user)
         db.session.commit()
         return jsonify({'message':'User Registered Successfully'}),201
     except Exception as e:
