@@ -1,3 +1,5 @@
 .env
 SQL.text
 .vscode
+taskhub
+__pycache__

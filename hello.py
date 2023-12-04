@@ -1,6 +1,6 @@
-from flask import Flask
-from app import app
+from flask import Flask,Blueprint
 
-@app.route("/tasks", methods=['GET'])
+hello = Blueprint('hello',__name__)
+@hello.route("/tasks", methods=['GET'])
 def get_tasks():
     return "<p> Retuns Tasks! </p>"
