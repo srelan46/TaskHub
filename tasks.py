@@ -1,7 +1,9 @@
-from flask import request, jsonify
-from app import app
-from models import User, Task,db
-@app.route("/tasks",methods=['POST'])
+from flask import Flask, request, jsonify,Blueprint
+from models import User,Task,db
+
+tasks_blueprint = Blueprint('tasks',__name__)
+
+@tasks_blueprint.route("/tasks",methods=['POST'])
 def tasks():
     if request.method =='POST':
         data = request.json
@@ -35,7 +37,7 @@ def tasks():
     if request.method =='GET':
         return "<p> Tasks <p>"
 
-@app.route("/alltasks",methods=['GET'])
+@tasks_blueprint.route("/alltasks",methods=['GET'])
 def get_all_tasks():
     tasks=Task.query.all()
     tasks_list = [{
@@ -51,8 +53,6 @@ def get_all_tasks():
 
     return jsonify(tasks_list)
 
-@app.route("/tasks/{id}",methods=['GET','Update','Delete'])
+@tasks_blueprint.route("/tasks/{id}",methods=['GET','Update','Delete'])
 def tasks_id():
-    return "<p> Get,Update Delete Specific task ID<\p>"
-
-
+    return "<p> Get,Update Delete Specific task ID</p>"

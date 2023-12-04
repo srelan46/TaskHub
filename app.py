@@ -2,17 +2,14 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = (f"postgresql://{os.getenv('DB_USERNAME')}:{os.getenv('DB_PASSWORD')}"
-    f"@{os.getenv('DB_HOST')}:5432/{os.getenv('DB_NAME')}")
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+from flask_login import LoginManager
+from flask_migrate import Migrate
+from dotenv import load_dotenv
+import os
 
-db = SQLAlchemy(app)    
-bcrypt = Bcrypt(app)
-
-from login import *
-from user import *
-from hello import *
+db = SQLAlchemy()
+bcrypt = Bcrypt()
+login_manager = LoginManager()
 
 def create_app():
     app = Flask(__name__)
@@ -31,9 +28,12 @@ def create_app():
     from login import auth_blueprint
     app.register_blueprint(auth_blueprint)
 
+    from tasks import tasks_blueprint
+    app.register_blueprint(tasks_blueprint)
+    
     @login_manager.user_loader
     def load_user(user_id):
-        from user import User
+        from models import User
         return User.query.get(int(user_id))
 
     return app
