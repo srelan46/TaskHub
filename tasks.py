@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify,Blueprint
 from models import User,Task,db
+from flask_login import login_required,current_user
 
 tasks_blueprint = Blueprint('tasks',__name__)
 
@@ -34,8 +35,6 @@ def tasks():
         except Exception as e:
             db.session.rollback()
             return jsonify({'message':'Failed to add Task','error':str(e)}),500
-    if request.method =='GET':
-        return "<p> Tasks <p>"
 
 @tasks_blueprint.route("/alltasks",methods=['GET'])
 def get_all_tasks():
@@ -53,6 +52,46 @@ def get_all_tasks():
 
     return jsonify(tasks_list)
 
-@tasks_blueprint.route("/tasks/{id}",methods=['GET','Update','Delete'])
-def tasks_id():
-    return "<p> Get,Update Delete Specific task ID</p>"
+@tasks_blueprint.route("/tasks/<int:id>",methods=['GET','PUT','DELETE'])
+@login_required
+def tasks_id(id):
+    task=Task.query.get(id)
+    if not tasks:
+        return jsonify({'message':'Failed to find task'}),404
+    if request.method=='GET':
+        return jsonify({
+            'id':task.id,
+            'title': task.title,
+            'username': task.username,
+            'description': task.description,
+            'due_date': task.due_date.isoformat() if task.due_date else None,
+            'completed': task.completed,
+            'created_at': task.created_at.isoformat(),
+            'updated_at': task.updated_at.isoformat() if task.updated_at else None
+        })
+    if request.method=='PUT':
+        if task.username != current_user.id:
+            return jsonify({'message':'User not authorized'}),404
+        else:
+            data = request.json
+            title = data.get('title')
+            username = data.get('username')
+            description = data.get('description')
+            due_date = data.get('due_date')
+            try:
+                db.session.commit()
+                return jsonify({'message':'Task Updated Successfully'}),200
+            except Exception as e:
+                db.session.rollback()
+                return jsonify({'message':'Update Failed','error':str(e)}),500
+    if request.method=='DELETE':
+        if task.username != current_user.id:
+            return jsonify({'message':'User not authorized'}),404
+        else:
+            try:
+                db.session.delete(task)
+                db.session.commit(task)
+                return jsonify({'message':'Task Updated Successfully'}),200
+            except Exception as e:
+                db.session.rollback()
+                return jsonify({'message':'Update Failed','error':str(e)}),500
