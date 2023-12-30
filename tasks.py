@@ -27,7 +27,7 @@ def tasks():
             description=description,
             due_date=due_date,
             )
-        
+
         db.session.add(new_task)
         try:
             db.session.commit()
@@ -78,6 +78,12 @@ def tasks_id(id):
             username = data.get('username')
             description = data.get('description')
             due_date = data.get('due_date')
+            Updated_task= Task(
+                title=title,
+                username=username,
+                description=description,
+                due_date=due_date
+            )
             try:
                 db.session.commit()
                 return jsonify({'message':'Task Updated Successfully'}),200

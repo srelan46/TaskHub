@@ -28,6 +28,9 @@ def create_app():
     from login import auth_blueprint
     app.register_blueprint(auth_blueprint)
 
+    from hello import hello
+    app.register_blueprint(hello)
+
     from tasks import tasks_blueprint
     app.register_blueprint(tasks_blueprint)
     
