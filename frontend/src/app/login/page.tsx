@@ -1,6 +1,6 @@
+'use-client'
 import Link from 'next/link';
 import { Form } from '../form';
-//import { signIn } from '../auth';
 import { SubmitButton } from '../submit-button';
 
 export default function Login() {
