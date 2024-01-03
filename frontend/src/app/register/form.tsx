@@ -1,13 +1,13 @@
 export function RegisterForm({
-    action,
+    onSubmit,
     children,
   }: {
-    action: any;
+    onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
     children: React.ReactNode;
   }) {
     return (
       <form
-        action={action}
+        onSubmit={onSubmit}
         className="flex flex-col space-y-4 bg-gray-50 px-4 py-8 sm:px-16"
       >
         <div>
