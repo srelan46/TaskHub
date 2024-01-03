@@ -3,3 +3,4 @@ SQL.text
 .vscode
 taskhub
 __pycache__
+frontend/node_modules
