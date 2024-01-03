@@ -4,7 +4,7 @@ auth_blueprint = Blueprint('auth',__name__)
 
 @auth_blueprint.route('/login', methods=['POST'])
 def login():
-    from user import User
+    from models import User
     data = request.json
     username = data.get('username')
     password = data.get('password')
@@ -28,7 +28,7 @@ def logout():
 
 @auth_blueprint.route('/register',methods=['POST'])
 def register():
-    from user import User,db
+    from models import User,db
     data=request.json
     username = data.get('username')
     password = data.get('password')

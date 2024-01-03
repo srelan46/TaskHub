@@ -28,9 +28,15 @@ def create_app():
     from login import auth_blueprint
     app.register_blueprint(auth_blueprint)
 
+    from hello import hello
+    app.register_blueprint(hello)
+
+    from tasks import tasks_blueprint
+    app.register_blueprint(tasks_blueprint)
+    
     @login_manager.user_loader
     def load_user(user_id):
-        from user import User
+        from models import User
         return User.query.get(int(user_id))
 
     return app
