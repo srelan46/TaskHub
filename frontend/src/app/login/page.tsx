@@ -3,12 +3,13 @@ import Link from 'next/link';
 import { LoginForm } from './form';
 import { SubmitButton } from '../submit-button';
 import { FormEvent, useState } from 'react';
-import router from 'next/router';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
   const [username,setUsername] = useState("");
   const [password,setPassword] = useState("");
   const [isError,setIsError] = useState(false);
+  const router = useRouter();
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -19,7 +20,8 @@ export default function Login() {
             },
             body: JSON.stringify({ username, password }),
         });
-
+        console.log(username);
+        console.log(password);
         if (!response.ok) {
             throw new Error('Login failed');
         }
@@ -38,7 +40,12 @@ export default function Login() {
             Use your email and password to sign in
           </p>
         </div>
-        <LoginForm onSubmit={onSubmit}>
+        <LoginForm onSubmit={onSubmit}
+                  username={username}
+                  onUsernameChange={(e) => setUsername(e.target.value)}
+                  password={password}
+                  onPasswordChange={(e) => setPassword(e.target.value)}
+        >
           <SubmitButton>Sign in</SubmitButton>
           <p className="text-center text-sm text-gray-600">
             {"Don't have an account? "}

@@ -1,8 +1,8 @@
 "use client";
 import { RegisterForm } from "./form";
 import { SubmitButton } from "../submit-button";
-import Link from "next/link";
 import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 export default function Register() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -10,6 +10,7 @@ export default function Register() {
     const [lastname, setLastName] = useState("");
     const [email, setEmail] = useState("");
     const [isError, setIsError] = useState(false);
+    const router = useRouter();
 
     const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault(); // Prevent default form submission
@@ -22,10 +23,10 @@ export default function Register() {
                 },
                 body: JSON.stringify({ username, password,email,firstname,lastname }),
             });
-
             if (!response.ok) {
                 throw new Error('Registration failed');
             }
+            router.push('/home');
         } catch (error) {
             setIsError(true);
             console.error('Registration error:', error);
@@ -40,7 +41,18 @@ export default function Register() {
                         Signup to Get Started
                     </p>
                 </div>
-                <RegisterForm onSubmit={onSubmit}>
+                <RegisterForm onSubmit={onSubmit}
+                            username={username}
+                            onUsernameChange={(e) => setUsername(e.target.value)}
+                            password={password}
+                            onPasswordChange={(e) => setPassword(e.target.value)}
+                            email={email}
+                  onEmailChange={(e) => setEmail(e.target.value)}
+                  firstname={firstname}
+                  onFirstNameChange={(e) => setFirstName(e.target.value)}
+                  lastname={lastname}
+                  onLastNameChange={(e) => setLastName(e.target.value)}
+                >
                     <SubmitButton>Sign Up</SubmitButton>
                 </RegisterForm>
             </div>
