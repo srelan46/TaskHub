@@ -45,3 +45,19 @@ class Board(db.Model):
     #Members of the board
     members = db.relationship('BoardMember', backref='board')
 
+class BoardMember(db.Model):
+    __tablename__ = 'board_members'
+
+    board_id = db.Column(db.Integer, db.ForeignKey('boards.id'), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
+    role = db.Column(db.String(50))
+
+class List(db.Model):
+    __tablename__ = 'lists'
+
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    position = db.Column(db.Integer)
+    board_id = db.Column(db.Integer, db.ForeignKey('boards.id'), nullable=False)
+    board = db.relationship('Board', backref='lists')
+
