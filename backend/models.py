@@ -13,6 +13,7 @@ class User(UserMixin,db.Model):
     last_login = db.Column(db.DateTime(timezone=True),server_default=func.now())
     first_name = db.Column(db.String(50))
     last_name = db.Column(db.String(50))
+    boards = db.relationship('BoardMember', backref='user')
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.password, password)
@@ -25,12 +26,21 @@ class Task(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
-    username = db.Column(db.String(50), db.ForeignKey('users.username'), nullable=False)
     description = db.Column(db.Text)
     due_date = db.Column(db.DateTime(timezone=True))
     completed = db.Column(db.Boolean, default=False)
+    position = db.Column(db.Integer)  #for ordering position in list
     created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
     updated_at = db.Column(db.DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+    # Relationship to User
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user = db.relationship('User', backref='tasks')
+
+    # Relationship to List
+    list_id = db.Column(db.Integer, db.ForeignKey('lists.id'))
+    list = db.relationship('List', backref='tasks')
+
 
 class Board(db.Model):
     __tablename__ = 'boards'
