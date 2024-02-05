@@ -49,6 +49,7 @@ class Board(db.Model):
     name = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text)
     created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
+    updated_at = db.Column(db.DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     #owner
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     owner = db.relationship('User', backref='owned_boards')

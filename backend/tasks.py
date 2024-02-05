@@ -62,7 +62,7 @@ def tasks_id(id):
         return jsonify({
             'id':task.id,
             'title': task.title,
-            'username': task.user_id,
+            'user_id': task.user_id,
             'description': task.description,
             'due_date': task.due_date.isoformat() if task.due_date else None,
             'completed': task.completed,
@@ -74,16 +74,10 @@ def tasks_id(id):
             return jsonify({'message':'User not authorized'}),404
         else:
             data = request.json
-            title = data.get('title')
-            user_id = data.get('user_id')
-            description = data.get('description')
-            due_date = data.get('due_date')
-            Updated_task= Task(
-                title=title,
-                user_id=user_id,
-                description=description,
-                due_date=due_date
-            )
+            task.title = data.get('title',task.title)
+            task.user_id = data.get('user_id',task.user_id)
+            task.description = data.get('description',task.description)
+            task.due_date = data.get('due_date',task.due_date)
             try:
                 db.session.commit()
                 return jsonify({'message':'Task Updated Successfully'}),200
@@ -96,7 +90,7 @@ def tasks_id(id):
         else:
             try:
                 db.session.delete(task)
-                db.session.commit(task)
+                db.session.commit()
                 return jsonify({'message':'Task Updated Successfully'}),200
             except Exception as e:
                 db.session.rollback()

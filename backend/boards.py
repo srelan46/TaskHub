@@ -40,6 +40,7 @@ def get_boards():
         'name': board.name,
         'description': board.description,
         'created_at': board.created_at.isoformat(),
+        'updated_at':board.updated_at.isoformat(),
         'role': 'owner'
     } for board in owned_boards]
 
@@ -67,7 +68,8 @@ def board_operations(id):
             'id': board.id,
             'name': board.name,
             'description': board.description,
-            'created_at': board.created_at.isoformat()
+            'created_at': board.created_at.isoformat(),
+            'updated_at': board.updated_at.isoformat() if board.updated_at else None
         })
 
     if request.method == 'PUT':
