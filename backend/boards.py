@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
-from models import Board, db
+from models import Board, BoardMember, db, User
 from sqlalchemy.exc import SQLAlchemyError
 
 boards_blueprint = Blueprint('boards', __name__)
@@ -24,7 +24,7 @@ def create_board():
     db.session.add(new_board)
     try:
         db.session.commit()
-        return jsonify({'message': 'Board created successfully'}), 201
+        return jsonify({'message': 'Board created successfully', 'board_id': new_board.id}), 201
     except SQLAlchemyError as e:
         db.session.rollback()
         return jsonify({'message': 'Failed to create board', 'error': str(e)}), 500
@@ -53,15 +53,15 @@ def get_boards():
 
     return jsonify(owned_boards_list + member_boards_list)
 
-
 @boards_blueprint.route("/boards/<int:id>", methods=['GET', 'PUT', 'DELETE'])
 @login_required
 def board_operations(id):
     board = Board.query.get_or_404(id)
 
+    # Check if the current user is the owner or a member with permissions
     if board.owner_id != current_user.id and not any(member.user_id == current_user.id for member in board.members):
         return jsonify({'message': 'Not authorized to access this board'}), 403
-    
+
     if request.method == 'GET':
         return jsonify({
             'id': board.id,
@@ -71,6 +71,8 @@ def board_operations(id):
         })
 
     if request.method == 'PUT':
+        if board.owner_id != current_user.id:
+            return jsonify({'message': 'Only the board owner can update the board'}), 403
         data = request.json
         board.name = data.get('name', board.name)
         board.description = data.get('description', board.description)
@@ -82,6 +84,8 @@ def board_operations(id):
             return jsonify({'message': 'Update failed', 'error': str(e)}), 500
 
     if request.method == 'DELETE':
+        if board.owner_id != current_user.id:
+            return jsonify({'message': 'Only the board owner can delete the board'}), 403
         try:
             db.session.delete(board)
             db.session.commit()

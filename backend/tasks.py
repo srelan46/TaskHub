@@ -9,21 +9,21 @@ def tasks():
     if request.method =='POST':
         data = request.json
         title = data.get('title')
-        username = data.get('username')
+        user_id = data.get('user_id')
         description = data.get('description')
         due_date = data.get('due_date')
         
-        if not title or not username:
+        if not title or not user_id:
             return jsonify({'message': 'Title, UserID and username are required'}), 400
         
-        existing_user = User.query.filter((User.username == username)).first()
+        existing_user = User.query.filter((User.id == user_id)).first()
         
         if not existing_user:
             return jsonify({'message':'User doesn\'t exist'}),409
         
         new_task = Task(
             title=title,
-            username=username,
+            user_id=user_id,
             description=description,
             due_date=due_date,
             )
@@ -42,7 +42,7 @@ def get_all_tasks():
     tasks_list = [{
         'id': task.id,
         'title': task.title,
-        'username': task.username,
+        'user_id': task.user_id,
         'description': task.description,
         'due_date': task.due_date.isoformat() if task.due_date else None,
         'completed': task.completed,
@@ -62,7 +62,7 @@ def tasks_id(id):
         return jsonify({
             'id':task.id,
             'title': task.title,
-            'username': task.username,
+            'username': task.user_id,
             'description': task.description,
             'due_date': task.due_date.isoformat() if task.due_date else None,
             'completed': task.completed,
@@ -70,17 +70,17 @@ def tasks_id(id):
             'updated_at': task.updated_at.isoformat() if task.updated_at else None
         })
     if request.method=='PUT':
-        if task.username != current_user.id:
+        if task.user_id != current_user.id:
             return jsonify({'message':'User not authorized'}),404
         else:
             data = request.json
             title = data.get('title')
-            username = data.get('username')
+            user_id = data.get('user_id')
             description = data.get('description')
             due_date = data.get('due_date')
             Updated_task= Task(
                 title=title,
-                username=username,
+                user_id=user_id,
                 description=description,
                 due_date=due_date
             )
@@ -91,7 +91,7 @@ def tasks_id(id):
                 db.session.rollback()
                 return jsonify({'message':'Update Failed','error':str(e)}),500
     if request.method=='DELETE':
-        if task.username != current_user.id:
+        if task.user_id != current_user.id:
             return jsonify({'message':'User not authorized'}),404
         else:
             try:
