@@ -14,7 +14,7 @@ def add_member_to_board(board_id):
 
     data = request.json
     user_id = data.get('user_id')
-    role = data.get('role', 'member')
+    role = data.get('role')
 
     user = User.query.get(user_id)
     if not user:
