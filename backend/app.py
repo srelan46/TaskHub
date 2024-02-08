@@ -34,6 +34,19 @@ def create_app():
     from tasks import tasks_blueprint
     app.register_blueprint(tasks_blueprint)
     
+    from boards import boards_blueprint
+    app.register_blueprint(boards_blueprint)
+
+    from boardMembers import board_member_blueprint
+    app.register_blueprint(board_member_blueprint)
+
+    from list import lists_blueprint
+    app.register_blueprint(lists_blueprint)
+    
+    with app.app_context():
+        from models import User, Board, BoardMember, Task, List
+        db.create_all()
+
     @login_manager.user_loader
     def load_user(user_id):
         from models import User
