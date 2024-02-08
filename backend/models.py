@@ -41,7 +41,6 @@ class Task(db.Model):
     list_id = db.Column(db.Integer, db.ForeignKey('lists.id'))
     list = db.relationship('List', backref='tasks')
 
-
 class Board(db.Model):
     __tablename__ = 'boards'
 

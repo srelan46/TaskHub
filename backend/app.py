@@ -40,6 +40,9 @@ def create_app():
     from boardMembers import board_member_blueprint
     app.register_blueprint(board_member_blueprint)
 
+    from list import lists_blueprint
+    app.register_blueprint(lists_blueprint)
+    
     with app.app_context():
         from models import User, Board, BoardMember, Task, List
         db.create_all()
