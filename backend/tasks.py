@@ -12,6 +12,7 @@ def tasks():
         user_id = data.get('user_id')
         description = data.get('description')
         due_date = data.get('due_date')
+        list_id = data.get('list_id')
         
         if not title or not user_id:
             return jsonify({'message': 'Title, UserID and username are required'}), 400
@@ -26,6 +27,7 @@ def tasks():
             user_id=user_id,
             description=description,
             due_date=due_date,
+            list_id = list_id
             )
 
         db.session.add(new_task)
@@ -47,7 +49,8 @@ def get_all_tasks():
         'due_date': task.due_date.isoformat() if task.due_date else None,
         'completed': task.completed,
         'created_at': task.created_at.isoformat(),
-        'updated_at': task.updated_at.isoformat() if task.updated_at else None
+        'updated_at': task.updated_at.isoformat() if task.updated_at else None,
+        'list_id': task.list_id
     } for task in tasks]
 
     return jsonify(tasks_list)
@@ -67,7 +70,8 @@ def tasks_id(id):
             'due_date': task.due_date.isoformat() if task.due_date else None,
             'completed': task.completed,
             'created_at': task.created_at.isoformat(),
-            'updated_at': task.updated_at.isoformat() if task.updated_at else None
+            'updated_at': task.updated_at.isoformat() if task.updated_at else None,
+            'list_id':task.list_id
         })
     if request.method=='PUT':
         if task.user_id != current_user.id:
@@ -78,6 +82,7 @@ def tasks_id(id):
             task.user_id = data.get('user_id',task.user_id)
             task.description = data.get('description',task.description)
             task.due_date = data.get('due_date',task.due_date)
+            task.list_id = data.get('list_id',task.list_id)
             try:
                 db.session.commit()
                 return jsonify({'message':'Task Updated Successfully'}),200
