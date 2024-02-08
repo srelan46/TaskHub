@@ -32,10 +32,10 @@ def get_lists(board_id):
     Board.query.get_or_404(board_id)
     lists = List.query.filter_by(board_id=board_id).order_by(List.position).all()
     lists_data = [{
-        'id': lst.id, 
-        'title': lst.title, 
-        'position': lst.position} 
-        for lst in lists]
+        'id': list.id, 
+        'title': list.title, 
+        'position': list.position} 
+        for list in lists]
     return jsonify(lists_data)
    
 @lists_blueprint.route('/lists/<int:list_id>', methods=['GET','PUT', 'DELETE'])
@@ -43,7 +43,7 @@ def get_lists(board_id):
 def list_operations(list_id):
     list = List.query.get_or_404(list_id)
     board = Board.query.get_or_404(list.board_id)
-    
+
     if board.owner_id != current_user.id and not any(member.user_id == current_user.id for member in board.members):
         return jsonify({'message': 'Not authorized to view this list'}), 403
 
@@ -68,7 +68,7 @@ def list_operations(list_id):
 
     elif request.method == 'DELETE':
         try:
-            db.session.delete(lst)
+            db.session.delete(list)
             db.session.commit()
             return jsonify({'message': 'List deleted successfully'}), 200
         except SQLAlchemyError as e:
