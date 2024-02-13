@@ -22,7 +22,7 @@ const TaskList = () => {
   }, []);
 
   return (
-    <div className="flex flex-wrap">
+    <div className="pl-40 pt-10 flex flex-wrap">
       {tasks.map((task) => (
         <TaskCard task={task} />
       ))}
