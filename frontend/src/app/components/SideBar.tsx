@@ -3,7 +3,7 @@ import {UserGroupIcon,Bars3Icon,ChartBarSquareIcon,CalendarDaysIcon} from '@hero
 
 function SideBar() {
     return (
-        <div className="fixed inset-y-0 left-0 bg-white w-40">
+        <div className="fixed inset-y-0 left-0 bg-white w-32">
             <h1 className="flex items-center justify-center text-2xl h-16 bg-purple-800 text-white font-bold">
                 TaskHub
             </h1>
