@@ -1,4 +1,5 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
+from flask_cors import CORS
 from flask_login import login_user,logout_user, login_required
 auth_blueprint = Blueprint('auth',__name__)
 
@@ -15,7 +16,8 @@ def login():
     user = User.query.filter_by(username=username).first()
 
     if user and user.check_password(password):
-        login_user(user)
+        login_user(user,remember=True)
+        session['user_id'] = user.id
         return jsonify({'message': 'Login successful'}), 200
     else:
         return jsonify({'message': 'Invalid credentials'}), 401

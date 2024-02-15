@@ -49,7 +49,7 @@ const TaskCard: React.FC<CardProps> = ({ task, onDelete,onEdit }) => {
 
 const TaskList: React.FC = () => {
   const [tasks, setTasks] = useState<taskDetail[]>([]);
-
+  
   useEffect(() => {
     async function fetchTasks() {
       try {
@@ -63,7 +63,6 @@ const TaskList: React.FC = () => {
         console.error("Fetch error:", error);
       }
     }
-
     fetchTasks();
   }, []);
 
@@ -71,6 +70,7 @@ const TaskList: React.FC = () => {
     try {
       const response = await fetch(`http://localhost:5000/tasks/${id}`, {
         method: "DELETE",
+        credentials: 'include',
       });
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -84,6 +84,7 @@ const TaskList: React.FC = () => {
     try {
       const response = await fetch(`http://localhost:5000/tasks/${id}`, {
         method: "PUT",
+        credentials: 'include',
       });
       if (!response.ok) {
         throw new Error("Network response was not ok");
