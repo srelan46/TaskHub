@@ -7,7 +7,7 @@ type CardProps = {
   onEdit: (id: number) => void;
 };
 
-const TaskCard: React.FC<CardProps> = ({ task, onDelete,onEdit }) => {
+const TaskCard: React.FC<CardProps> = ({ task, onDelete, onEdit }) => {
   const dueDate = new Date(task.due_date).toLocaleDateString();
   const createDate = new Date(task.created_at).toLocaleDateString();
 
@@ -49,7 +49,7 @@ const TaskCard: React.FC<CardProps> = ({ task, onDelete,onEdit }) => {
 
 const TaskList: React.FC = () => {
   const [tasks, setTasks] = useState<taskDetail[]>([]);
-  
+
   useEffect(() => {
     async function fetchTasks() {
       try {
@@ -70,8 +70,12 @@ const TaskList: React.FC = () => {
     try {
       const response = await fetch(`http://localhost:5000/tasks/${id}`, {
         method: "DELETE",
-        credentials: 'include',
+        credentials: "include",
       });
+      const res = await response.json();
+      if (response.status === 404) {
+        throw new Error(res.message);
+      }
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -84,8 +88,12 @@ const TaskList: React.FC = () => {
     try {
       const response = await fetch(`http://localhost:5000/tasks/${id}`, {
         method: "PUT",
-        credentials: 'include',
+        credentials: "include",
       });
+      const res = await response.json();
+      if (response.status === 404) {
+        throw new Error(res.message);
+      }
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
