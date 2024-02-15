@@ -4,9 +4,10 @@ import { taskDetail } from "./task";
 type CardProps = {
   task: taskDetail;
   onDelete: (id: number) => void;
+  onEdit: (id: number) => void;
 };
 
-const TaskCard: React.FC<CardProps> = ({ task, onDelete }) => {
+const TaskCard: React.FC<CardProps> = ({ task, onDelete,onEdit }) => {
   const dueDate = new Date(task.due_date).toLocaleDateString();
   const createDate = new Date(task.created_at).toLocaleDateString();
 
@@ -24,9 +25,7 @@ const TaskCard: React.FC<CardProps> = ({ task, onDelete }) => {
         </div>
         <button
           className="text-xs font-semibold text-blue-500 hover:text-blue-700 mr-2"
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
+          onClick={() => onEdit(task.id)}
         >
           Edit
         </button>
@@ -81,11 +80,28 @@ const TaskList: React.FC = () => {
       console.error("Delete error:", error);
     }
   };
-
+  const handleEdit = async (id: number) => {
+    try {
+      const response = await fetch(`http://localhost:5000/tasks/${id}`, {
+        method: "PUT",
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      setTasks((currentTasks) => currentTasks.filter((task) => task.id !== id));
+    } catch (error) {
+      console.error("Edit error: ", error);
+    }
+  };
   return (
     <div className="pl-32 pt-10 flex flex-wrap">
       {tasks.map((task) => (
-        <TaskCard key={task.id} task={task} onDelete={handleDelete} />
+        <TaskCard
+          key={task.id}
+          task={task}
+          onDelete={handleDelete}
+          onEdit={handleEdit}
+        />
       ))}
     </div>
   );
