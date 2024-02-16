@@ -1,36 +1,35 @@
 "use client";
-import Link from 'next/link';
-import { LoginForm } from './form';
-import { SubmitButton } from '../submit-button';
-import { FormEvent, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from "next/link";
+import { LoginForm } from "./form";
+import { SubmitButton } from "../submit-button";
+import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
-  const [username,setUsername] = useState("");
-  const [password,setPassword] = useState("");
-  const [isError,setIsError] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [isError, setIsError] = useState(false);
   const router = useRouter();
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-        const response = await fetch('http://localhost:5000/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ username, password }),
-        });
-        console.log(username);
-        console.log(password);
-        if (!response.ok) {
-            throw new Error('Login failed');
-        }
-        router.push('/home');
+      const response = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        throw new Error("Login failed");
+      }
+      router.push("/home");
     } catch (error) {
-        setIsError(true);
-        console.error('Login error:', error);
+      setIsError(true);
+      console.error("Login error:", error);
     }
-};
+  };
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-violet-900">
       <div className="z-10 w-full max-w-md overflow-hidden rounded-2xl border border-gray-100 shadow-xl">
@@ -40,11 +39,12 @@ export default function Login() {
             Use your email and password to sign in
           </p>
         </div>
-        <LoginForm onSubmit={onSubmit}
-                  username={username}
-                  onUsernameChange={(e) => setUsername(e.target.value)}
-                  password={password}
-                  onPasswordChange={(e) => setPassword(e.target.value)}
+        <LoginForm
+          onSubmit={onSubmit}
+          username={username}
+          onUsernameChange={(e) => setUsername(e.target.value)}
+          password={password}
+          onPasswordChange={(e) => setPassword(e.target.value)}
         >
           <SubmitButton>Sign in</SubmitButton>
           <p className="text-center text-sm text-gray-600">
@@ -52,7 +52,7 @@ export default function Login() {
             <Link href="/register" className="font-semibold text-black">
               Sign up
             </Link>
-            {' for free.'}
+            {" for free."}
           </p>
         </LoginForm>
       </div>

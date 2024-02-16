@@ -70,4 +70,3 @@ class List(db.Model):
     position = db.Column(db.Integer)
     board_id = db.Column(db.Integer, db.ForeignKey('boards.id'), nullable=False)
     board = db.relationship('Board', backref='lists')
-
