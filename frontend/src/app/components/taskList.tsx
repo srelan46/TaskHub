@@ -58,7 +58,7 @@ const TaskList: React.FC = () => {
     }
   };
   return (
-    <div className="pl-32 pt-10 flex flex-wrap">
+    <div className="pl-32 flex flex-wrap">
       {tasks.map((task) => (
         <TaskCard
           key={task.id}
