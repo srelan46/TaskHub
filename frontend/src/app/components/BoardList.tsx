@@ -32,7 +32,6 @@ const BoardList: React.FC = () => {
         setBoards(data);
         if (data.length > 0) {
           setSelectedBoard(data[0].id.toString());
-          console.log(data[0].id);
         }
       } catch (error) {
         console.error("Error fetching boards:", error);

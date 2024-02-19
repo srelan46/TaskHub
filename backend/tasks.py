@@ -83,6 +83,7 @@ def tasks_id(id):
             task.description = data.get('description',task.description)
             task.due_date = data.get('due_date',task.due_date)
             task.list_id = data.get('list_id',task.list_id)
+            task.completed = data.get('completed',task.completed)
             try:
                 db.session.commit()
                 return jsonify({'message':'Task Updated Successfully'}),200
