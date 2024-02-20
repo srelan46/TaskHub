@@ -22,6 +22,20 @@ def login():
     else:
         return jsonify({'message': 'Invalid credentials'}), 401
 
+@auth_blueprint.route('/current_user',methods=['GET'])
+@login_required
+def current_user():
+    from models import User
+    id = session['user_id']
+    user = User.query.filter_by(id=id).first()
+    return jsonify({
+        'user_id':user.id,
+        'username':user.username,
+        'email':user.email,
+        'first_name':user.first_name,
+        'last_name':user.last_name
+    })
+
 @auth_blueprint.route('/logout')
 @login_required
 def logout():
