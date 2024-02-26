@@ -49,6 +49,7 @@ class Board(db.Model):
     description = db.Column(db.Text)
     created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
     updated_at = db.Column(db.DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    lists = db.relationship('Lists',backref='')
     #owner
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     owner = db.relationship('User', backref='owned_boards')
@@ -62,11 +63,11 @@ class BoardMember(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     role = db.Column(db.String(50))
 
-class List(db.Model):
+class Lists(db.Model):
     __tablename__ = 'lists'
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(255), nullable=False)
-    position = db.Column(db.Integer)
+    position = db.Column(db.Integer,nullable=False,default=0)
     board_id = db.Column(db.Integer, db.ForeignKey('boards.id'), nullable=False)
-    board = db.relationship('Board', backref='lists')
+    board = db.relationship('Board', backref=db.backref('lists', order_by=position))
