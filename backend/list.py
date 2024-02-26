@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_login import login_required, current_user
-from models import db, Board, List
+from models import db, Board, Lists
 from sqlalchemy.exc import SQLAlchemyError
 
 lists_blueprint = Blueprint('lists', __name__)
@@ -17,7 +17,7 @@ def create_list(board_id):
     if not title:
         return jsonify({'message': 'List title is required'}), 400
     
-    new_list = List(title=title, board_id=board_id)
+    new_list = Lists(title=title, board_id=board_id)
     db.session.add(new_list)
     try:
         db.session.commit()
@@ -30,7 +30,7 @@ def create_list(board_id):
 @login_required
 def get_lists(board_id):
     Board.query.get_or_404(board_id)
-    lists = List.query.filter_by(board_id=board_id).order_by(List.position).all()
+    lists = Lists.query.filter_by(board_id=board_id).order_by(Lists.position).all()
     lists_data = [{
         'id': list.id, 
         'title': list.title, 
@@ -41,7 +41,7 @@ def get_lists(board_id):
 @lists_blueprint.route('/lists/<int:list_id>', methods=['GET','PUT', 'DELETE'])
 @login_required
 def list_operations(list_id):
-    list = List.query.get_or_404(list_id)
+    list = Lists.query.get_or_404(list_id)
     board = Board.query.get_or_404(list.board_id)
 
     if board.owner_id != current_user.id and not any(member.user_id == current_user.id for member in board.members):

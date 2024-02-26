@@ -29,7 +29,7 @@ class Task(db.Model):
     description = db.Column(db.Text)
     due_date = db.Column(db.DateTime(timezone=True))
     completed = db.Column(db.Boolean, default=False)
-    position = db.Column(db.Integer)  #for ordering position in list
+    position = db.Column(db.Integer,nullable=False, default=0) 
     created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
     updated_at = db.Column(db.DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
@@ -38,8 +38,8 @@ class Task(db.Model):
     user = db.relationship('User', backref='tasks')
 
     # Relationship to List
-    list_id = db.Column(db.Integer, db.ForeignKey('lists.id'))
-    list = db.relationship('List', backref='tasks')
+    list_id = db.Column(db.Integer, db.ForeignKey('lists.id'),nullable=False)
+    list = db.relationship('Lists',  backref=db.backref('tasks', order_by=position, cascade="all, delete-orphan"))
 
 class Board(db.Model):
     __tablename__ = 'boards'
@@ -49,7 +49,6 @@ class Board(db.Model):
     description = db.Column(db.Text)
     created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
     updated_at = db.Column(db.DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-    lists = db.relationship('Lists',backref='')
     #owner
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     owner = db.relationship('User', backref='owned_boards')
@@ -70,4 +69,4 @@ class Lists(db.Model):
     title = db.Column(db.String(255), nullable=False)
     position = db.Column(db.Integer,nullable=False,default=0)
     board_id = db.Column(db.Integer, db.ForeignKey('boards.id'), nullable=False)
-    board = db.relationship('Board', backref=db.backref('lists', order_by=position))
+    board = db.relationship('Board', backref=db.backref('lists', order_by=position,cascade="all, delete-orphan"))
