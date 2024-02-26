@@ -1,4 +1,3 @@
-# run.py or similar file
 from app import create_app
 from flask_cors import CORS
 from waitress import serve
